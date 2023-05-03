@@ -1,0 +1,68 @@
+{
+  "name": "rollbar-sourcemap-webpack",
+  "description": "A Webpack plugin to upload sourcemaps to Rollbar after build",
+  "version": "1.0.0",
+  "author": "Vinccool96 <Vinccool96@gmail.com>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/Vinccool96/rollbar-sourcemap-webpack.git"
+  },
+  "keywords": [
+    "webpack",
+    "plugin",
+    "rollbar",
+    "source map",
+    "sourcemap",
+    "sourcemaps",
+    "production"
+  ],
+  "scripts": {
+    "build": "unbuild",
+    "prepack": "pnpm build",
+    "lint": "eslint . --fix",
+    "checkTypes": "tsc src/*.ts test/*.ts --noEmit --esModuleInterop --resolveJsonModule",
+    "test": "vitest"
+  },
+  "dependencies": {
+    "form-data": "^4.0.0",
+    "lodash.isfunction": "^3.0.9",
+    "lodash.isstring": "^4.0.1",
+    "node-fetch": "^3.3.1",
+    "verror": "^1.10.1"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.21.8",
+    "@babel/preset-env": "^7.21.5",
+    "@babel/preset-typescript": "^7.21.5",
+    "@types/lodash.isfunction": "^3.0.7",
+    "@types/lodash.isstring": "^4.0.7",
+    "@types/node": "^18.16.3",
+    "@types/verror": "^1.10.6",
+    "@typescript-eslint/eslint-plugin": "^5.59.2",
+    "@typescript-eslint/parser": "^5.59.2",
+    "@vitest/coverage-c8": "^0.31.0",
+    "@vue/eslint-config-typescript": "^11.0.3",
+    "eslint": "^8.39.0",
+    "eslint-config-prettier": "^8.8.0",
+    "eslint-plugin-prettier": "^4.2.1",
+    "eslint-plugin-vue": "^9.11.0",
+    "nock": "^13.3.1",
+    "prettier": "^2.8.8",
+    "tapable": "^2.2.1",
+    "ts-node": "^10.9.1",
+    "typescript": "^5.0.4",
+    "unbuild": "^1.2.1",
+    "vitest": "^0.31.0",
+    "webpack": "^5.82.0"
+  },
+  "peerDependencies": {
+    "webpack": ">= 4",
+    "tapable": ">= 1"
+  },
+  "pnpm": {
+    "overrides": {
+      "rollbar-sourcemap-webpack": "link:."
+    }
+  }
+}
