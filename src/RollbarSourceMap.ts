@@ -1,9 +1,10 @@
 import { promises as fs } from "fs"
 import { join } from "path"
+import { STATUS_CODES } from "http"
 
 import { Compilation, Compiler } from "webpack"
-import fetch from "node-fetch"
-import FormData from "form-data"
+import fetch, { Response, FetchError } from "node-fetch"
+import { Blob, FormData } from "formdata-node"
 import isString from "lodash.isstring"
 import VError from "verror"
 
@@ -31,6 +32,21 @@ export type RollbarSourceMapOptions = {
 export type SimplifiedChunk = {
   sourceFile: string
   sourceMap: string
+}
+
+function getDetailsFromStatus(res: Response): string {
+  const statusText = res.statusText
+  if (statusText !== "") {
+    return `${res.status} - ${statusText}`
+  } else {
+    const status = res.status
+    const statusTextOfCode = STATUS_CODES[status]
+    if (typeof statusTextOfCode !== "undefined") {
+      return `${status} - ${statusTextOfCode}`
+    } else {
+      return `${status} - Unknown Status Code`
+    }
+  }
 }
 
 export class RollbarSourceMap {
@@ -147,7 +163,7 @@ export class RollbarSourceMap {
 
   async uploadSourceMap(compilation: Compilation, { sourceFile, sourceMap }: SimplifiedChunk) {
     const errMessage = `failed to upload ${sourceMap} to Rollbar`
-    let sourceMapSource
+    let sourceMapSource: string
 
     try {
       sourceMapSource = await this.getSource(compilation, sourceMap)
@@ -159,31 +175,36 @@ export class RollbarSourceMap {
     form.append("access_token", this.accessToken)
     form.append("version", this.version)
     form.append("minified_url", this.getPublicPath(sourceFile))
-    form.append("source_map", sourceMapSource, {
-      filename: sourceMap,
-      contentType: "application/json",
-    })
+    const sourceMapSourceBlob = new Blob([sourceMapSource], { type: "application/json" })
+    form.append("source_map", sourceMapSourceBlob)
 
-    let res
+    let res: Response
     try {
       res = await fetch(this.rollbarEndpoint, {
         method: "POST",
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
         body: form,
       })
     } catch (err) {
       // Network or operational errors
-      throw new VError(err as Error, errMessage)
+      throw new VError(err as FetchError, errMessage)
     }
 
     // 4xx or 5xx response
     if (!res.ok) {
       // Attempt to parse error details from response
-      let details
+      let details: string
       try {
-        const body = (await res.json()) as { message: unknown }
-        details = body?.message ?? `${res.status} - ${res.statusText}`
+        const body = (await res.json()) as { message?: string | null } | undefined
+        const message = body?.message
+        if (typeof message !== "undefined" && message !== null) {
+          details = message
+        } else {
+          details = getDetailsFromStatus(res)
+        }
       } catch (parseErr) {
-        details = `${res.status} - ${res.statusText}`
+        details = getDetailsFromStatus(res)
       }
 
       throw new Error(`${errMessage}: ${details}`)

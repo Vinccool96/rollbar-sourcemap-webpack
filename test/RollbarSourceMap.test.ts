@@ -488,10 +488,20 @@ describe("RollbarSourceMap", () => {
     it("returns response status text if response body does not have message", async () => {
       const scope = nock("https://api.rollbar.com:443") // eslint-disable-line @typescript-eslint/no-unused-vars
         .post("/api/1/sourcemap")
-        .reply(422, JSON.stringify({ err: 1 }))
+        .reply(422, { err: 1 })
 
       await expect(plugin.uploadSourceMap(compilation, chunk)).rejects.toThrow(
         "failed to upload vendor.5190.js.map to Rollbar: 422 - Unprocessable Entity"
+      )
+    })
+
+    it("returns unknown status code if response body has an unknown status code", async () => {
+      const scope = nock("https://api.rollbar.com:443") // eslint-disable-line @typescript-eslint/no-unused-vars
+        .post("/api/1/sourcemap")
+        .reply(420, { err: 1 })
+
+      await expect(plugin.uploadSourceMap(compilation, chunk)).rejects.toThrow(
+        "failed to upload vendor.5190.js.map to Rollbar: 420 - Unknown Status Code"
       )
     })
 

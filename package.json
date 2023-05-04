@@ -25,7 +25,7 @@
     "test": "vitest"
   },
   "dependencies": {
-    "form-data": "^4.0.0",
+    "formdata-node": "^5.0.0",
     "lodash.isfunction": "^3.0.9",
     "lodash.isstring": "^4.0.1",
     "node-fetch": "^3.3.1",
@@ -57,8 +57,8 @@
     "webpack": "^5.82.0"
   },
   "peerDependencies": {
-    "webpack": ">= 4",
-    "tapable": ">= 1"
+    "tapable": ">= 1",
+    "webpack": ">= 4"
   },
   "pnpm": {
     "overrides": {
