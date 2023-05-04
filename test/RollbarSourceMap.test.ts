@@ -17,7 +17,7 @@ describe("RollbarSourceMap", () => {
 
   beforeEach(() => {
     compiler = {
-      options: <WebpackOptionsNormalized>{},
+      options: {} as WebpackOptionsNormalized,
       plugin: vi.fn(),
       hooks: {
         afterEmit: {
@@ -124,7 +124,7 @@ describe("RollbarSourceMap", () => {
       expect(compilation.warnings.length).toBe(0)
     })
 
-    it("adds upload warnings to compilation warnings, " + "if ignoreErrors is true and silent is false", async () => {
+    it("adds upload warnings to compilation warnings, if ignoreErrors is true and silent is false", async () => {
       const compilation = {
         errors: [],
         warnings: [],
@@ -218,16 +218,6 @@ describe("RollbarSourceMap", () => {
       plugin = new RollbarSourceMap(options)
       const result = plugin.getPublicPath(sourceFile)
       expect(result).toBe("https://my.cdn.net/assets/vendor.5190.js")
-    })
-
-    it("returns whatever is returned by publicPath argument when it's a function", () => {
-      const options = {
-        ...defaultOptions,
-        publicPath: (srcFile: string) => `https://my.function.proxy.cdn/assets/${srcFile}`,
-      }
-      plugin = new RollbarSourceMap(options)
-      const result = plugin.getPublicPath(sourceFile)
-      expect(result).toBe("https://my.function.proxy.cdn/assets/vendor.5190.js")
     })
 
     it("returns whatever is returned by publicPath argument when it's a function", () => {
