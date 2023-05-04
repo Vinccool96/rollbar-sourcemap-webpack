@@ -5,7 +5,14 @@ module.exports = {
     sourceType: "module",
   },
   plugins: ["@typescript-eslint/eslint-plugin"],
-  extends: ["plugin:@typescript-eslint/recommended", "plugin:prettier/recommended", "plugin:vue/vue3-recommended"],
+  extends: [
+    "plugin:@typescript-eslint/recommended",
+    "plugin:prettier/recommended",
+    "plugin:vue/vue3-recommended",
+    "plugin:react/recommended",
+    "react-app",
+    "react-app/jest",
+  ],
   root: true,
   env: {
     node: true,
@@ -27,5 +34,11 @@ module.exports = {
     "one-var": ["error", "never"],
     "vue/html-self-closing": "off",
     "@typescript-eslint/ban-types": ["error", { types: { Function: false } }],
+    "react/react-in-jsx-scope": "off",
+  },
+  settings: {
+    react: {
+      version: "18.2.0",
+    },
   },
 }
