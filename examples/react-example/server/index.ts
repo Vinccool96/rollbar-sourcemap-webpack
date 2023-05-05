@@ -1,5 +1,5 @@
-import express from "express"
-import path from "path"
+import * as path from "path"
+import * as express from "express"
 const app = express() //Line 2
 const port = process.env.PORT || 5000 //Line 3
 
